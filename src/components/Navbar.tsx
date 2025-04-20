@@ -3,9 +3,7 @@ import { BellIcon } from "@heroicons/react/16/solid"
 import { NavLink } from "react-router-dom"
 
 const navigation = [
-	{ name: 'Product', to: '/product', current: true },
-	{ name: 'Recipes', to: '/recipes', current: false },
-	{ name: 'Carts', to: '/carts', current: false },
+
 	{ name: 'Post', to: '/posts', current: false },
 ]
 
@@ -87,7 +85,9 @@ const Navbar = () => {
 								</MenuItem>
 								<MenuItem>
 									<a
-										href="#"
+										onClick={() => 
+											logout();
+										}}
 										className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
 									>
 										Sign out
@@ -99,7 +99,7 @@ const Navbar = () => {
 				</div>
 			</div>
 		</Disclosure>
-	)
-}
+	);
+};
 
 export default Navbar
