@@ -22,7 +22,7 @@ const Login = () => {
 
   const handleLogin = async (data: LoginInput) => {
     try {
-      const res = await axios.post<{ access_token: string }>(
+      const res = await axios.post<{ access_token: string; user: { email: string; username: string } }>(
         "/api/auth/login",
         {
           email: data.email,
@@ -30,10 +30,14 @@ const Login = () => {
         }
       );
 
+      console.log("Login response:", res.data); // Debug log
+
       if (res.data?.access_token) {
         login(res.data.access_token);
-        navigate("/");
+        console.log("Token saved, redirecting to home..."); // Debug log
+        navigate("/home", { replace: true });
       } else {
+        console.error("No access token in response:", res.data); // Debug log
         alert("Login failed. Please check your credentials.");
       }
     } catch (err) {
@@ -47,17 +51,13 @@ const Login = () => {
   });
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
-      <div className="w-full max-w-sm border border-gray-300 rounded-lg p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-100">
+      <div className="w-full max-w-sm border border-gray-300 rounded-lg p-6 bg-white">
         {isPending && (
           <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-20 rounded-lg">
             <div className="w-10 h-10 border-4 border-gray-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
-
-        <h1 className="text-xl font-semibold text-center mb-6">
-          Dapur Rumahan
-        </h1>
 
         <div className="text-center mb-6">
           <span className="border border-gray-300 rounded px-4 py-1">
@@ -109,26 +109,22 @@ const Login = () => {
           <button
             type="submit"
             disabled={isPending}
-            className="w-full bg-white border border-gray-300 text-black rounded p-2 hover:bg-gray-50 transition-colors"
+            className="w-full bg-[#1f3354] text-white py-3 rounded-full font-semibold hover:bg-[#16253c] transition"
           >
             Login
           </button>
         </form>
-      </div>
 
-      <p className="mt-4 text-sm">
-        Belum punya akun?{" "}
-        <a
-          href="/register"
-          className="text-black hover:underline"
-          onClick={(e) => {
-            e.preventDefault();
-            navigate('/register');
-          }}
-        >
-          Daftar
-        </a>
-      </p>
+        <p className="mt-4 text-center text-sm text-gray-600">
+          Belum punya akun?{" "}
+          <span
+            className="text-[#1f3354] font-semibold hover:underline cursor-pointer"
+            onClick={() => navigate("/register")}
+          >
+            Daftar
+          </span>
+        </p>
+      </div>
     </div>
   );
 };
