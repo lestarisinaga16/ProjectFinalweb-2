@@ -1,43 +1,46 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+// src/utils/AuthProvider.tsx
+import React, { createContext, useState, useMemo /*, useEffect, dll */ } from 'react';
+// Mungkin perlu impor tipe lain
 
-type AuthContextType = {
-  isAuthenticated: boolean;
-  login: (token: string) => void;
+// Definisikan tipe untuk context value Anda
+interface AuthContextType {
+  token: string | null;
+  login: (newToken: string) => void;
   logout: () => void;
-  getToken: () => string | null;
-};
+  // tambahkan properti/fungsi lain yang relevan
+}
 
-const AuthContext = createContext<AuthContextType | null>(null);
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    !!localStorage.getItem("token")
-  );
+// Buat context dan EKSPOR context tersebut
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-  const login = (token: string) => {
-    localStorage.setItem("token", token);
-    setIsAuthenticated(true);
+// Definisikan komponen AuthProvider
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [token, setToken] = useState<string | null>(localStorage.getItem('authToken')); // Contoh inisialisasi
+
+  // Fungsi login, logout, dll.
+  const login = (newToken: string) => {
+    setToken(newToken);
+    localStorage.setItem('authToken', newToken); // Contoh simpan ke local storage
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    setIsAuthenticated(false);
+    setToken(null);
+    localStorage.removeItem('authToken'); // Contoh hapus dari local storage
   };
 
-  const getToken = (): string | null => {
-    return localStorage.getItem("token");
-  };
+  // Gunakan useMemo agar value context tidak berubah referensinya setiap render
+  const contextValue = useMemo(() => ({
+    token,
+    login,
+    logout,
+  }), [token]); // Sertakan dependensi yang relevan
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, getToken }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used withnin an AuthProvider");
-  }
-  return context;
-};
+// JANGAN ekspor useAuth dari sini lagi
+// export default AuthProvider; // Atau gunakan named export jika preferensi Anda begitu

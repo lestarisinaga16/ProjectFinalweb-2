@@ -1,74 +1,34 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-  RouterProvider
-} from "react-router-dom";
-import RootLayout from "./layouts/RootLayout";
-import Home from "./pages/Home";
-import Post from "./pages/Post";
-import { AuthProvider } from "./utils/AuthProvider";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import BaseLayout from "./layouts/BaseLayout";
-import PrivateRoute from "./utils/PrivateRoute";
-import PublicRoute from "./utils/PublicRoute";
+// src/App.tsx (Contoh dengan BrowserRouter di sini)
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'; // Pastikan BrowserRouter diimpor
+import { AuthProvider } from './utils/AuthProvider';
+// ... import komponen halaman lainnya ...
+import Home from './pages/Home';
+import MenuMakanan from './pages/Menu';
+import Pemesanan from './pages/Pesan';
+import Deliveries from './pages/Deliveries';
+import Testimoni from './pages/Testimonies';
+import Profile from './pages/Profile';
+// ... dst ...
 
-const queryClient = new QueryClient();
-
-function App() {
-  const router = createBrowserRouter(
-    createRoutesFromElements(
-      <Route>
-        <Route path="/" element={<RootLayout />}>
-          <Route
-            index
-            element={
-              <PrivateRoute>
-                <Home />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="posts"
-            element={
-              <PrivateRoute>
-                <Post />
-              </PrivateRoute>
-            }
-          />
-        </Route>
-        <Route path="/" element={<BaseLayout />}>
-          <Route
-            path="login"
-            element={
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
-            }
-          />
-          <Route
-            path="register"
-            element={
-              <PublicRoute>
-                <Register />
-              </PublicRoute>
-            }
-          />
-        </Route>
-      </Route>
-    )
-  );
+const App: React.FC = () => {
   return (
-    <>
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
-        </QueryClientProvider>
-      </AuthProvider>
-    </>
+    <AuthProvider>
+      <BrowserRouter> {/* <-- BrowserRouter membungkus Routes */}
+        <Routes>
+          {/* ... definisi <Route> Anda ... */}
+          <Route path="/" element={<Home />} />
+          <Route path="/menu" element={<MenuMakanan />} />
+          <Route path="/pesan" element={<Pemesanan />} />
+          <Route path="/deliveries" element={<Deliveries />} />
+          <Route path="/testimonies" element={<Testimoni />} />
+          <Route path="/profile" element={<Profile />} />
+          {/* ... dst ... */}
+           <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter> {/* <-- Tutup BrowserRouter */}
+    </AuthProvider>
   );
-}
+};
 
 export default App;
